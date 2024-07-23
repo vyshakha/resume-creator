@@ -9,26 +9,23 @@ class Llm_caller:
         config = configparser.ConfigParser()
         config.read('config.ini')
         os.environ['GOOGLE_API_KEY'] = config.get('API','gemini_api')
-
-    def initiate_model(self):
         print("Initiating model......")
-        llm = ChatGoogleGenerativeAI(
+        self.llm = ChatGoogleGenerativeAI(
             model="gemini-1.5-pro",
             temperature=0,
             max_tokens=None,
             timeout=None,
             max_retries=2,
         )
-        return llm
     
     def create_prompt(self,resume_data):
         messages = [
             (
                 "system",
-                """You are a resume creator. Create a resume from the user data based on following order Name,
-                 professional experience, technical skills, software skills, project details, academic details. 
-                Please remove all the other details. If any details above mentioned are not available,
-                 donot answer the question yourself. Provide '#{name}' for name, '##{heading}' for main heading and '###{heading}' for subheading.
+                """You are a resume creator. Create a resume from the user data based on following order.Start with name in '#{name}' format
+                 followed by professional experience, technical skills, software skills, project details, academic details. 
+                 Please remove all the other details. If any details above mentioned are not available,
+                 donot answer the question yourself. Provide '##{heading}' for main heading and '###{heading}' for subheading.
                  Avoid unwanted '#' in the prompt""",
             ),
             ("human", resume_data),
@@ -36,8 +33,7 @@ class Llm_caller:
         return messages
     
     def send_api_req(self,resume_data):
-        llm_model = self.initiate_model()
         prompt = self.create_prompt(resume_data)
         print("Send API to LLM........")
-        ai_msg = llm_model.invoke(prompt)
+        ai_msg = self.llm.invoke(prompt)
         return ai_msg.content

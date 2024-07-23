@@ -6,12 +6,14 @@ class Pdf_reader:
     def __init__(self) -> None:
         pass
     
-    def get_pdf_text_from_url(self,urls):
+    def get_pdf_text_from_url(self,url):
         print("Reading pdf from given URL........")
-        text = ""
-        for url in urls:
+        try:
             response = requests.get(url)
             pdf_file = io.BytesIO(response.content)
-            text += pdfminer_extract_text(pdf_file)
-        return text
+            return pdfminer_extract_text(pdf_file)
+        except:
+            print(f"Unexpected document {url}")
+            return None
+        
     
