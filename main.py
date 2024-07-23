@@ -26,6 +26,6 @@ for index,each_resume in enumerate(res_urls):
     res_data = pd.get_pdf_text_from_url(each_resume)
     if res_data:
         pdf_data = call_module.send_api_req(res_data)
-        with open(f'./txt_outputs/{index+1}.txt','w+') as f:
+        with open(f'D:/python/client_resume/txt_outputs/{index+1}.txt','w+') as f:
             f.write(pdf_data)
     print(f"Completed {index+1} out of {len(res_urls)}")
