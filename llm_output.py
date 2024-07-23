@@ -11,6 +11,7 @@ class Llm_caller:
         os.environ['GOOGLE_API_KEY'] = config.get('API','gemini_api')
 
     def initiate_model(self):
+        print("Initiating model......")
         llm = ChatGoogleGenerativeAI(
             model="gemini-1.5-pro",
             temperature=0,
@@ -20,22 +21,23 @@ class Llm_caller:
         )
         return llm
     
-    def create_prompt(self):
+    def create_prompt(self,resume_data):
         messages = [
             (
                 "system",
-                "You are a helpful assistant that translates English to French. Translate the user sentence.",
+                """You are a resume creator. Create a resume from the user data based on following order Name,
+                 professional experience, technical skills, software skills, project details, academic details. 
+                Please remove all the other details. If any details above mentioned are not available,
+                 donot answer the question yourself. Provide '#{name}' for name, '##{heading}' for main heading and '###{heading}' for subheading.
+                 Avoid unwanted '#' in the prompt""",
             ),
-            ("human", "I love programming."),
+            ("human", resume_data),
         ]
         return messages
     
-    def send_api_req(self):
+    def send_api_req(self,resume_data):
         llm_model = self.initiate_model()
-        prompt = self.create_prompt()
+        prompt = self.create_prompt(resume_data)
+        print("Send API to LLM........")
         ai_msg = llm_model.invoke(prompt)
         return ai_msg.content
-
-
-cl = Llm_caller()
-        
